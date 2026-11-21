@@ -1,0 +1,16 @@
+# Local PHP configuration
+config.php
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test downloads and temporary cookie jars
+test.mp4
+streamlab-cookies.txt
+
+# Local media and protected content
+private/*
+!private/.htaccess

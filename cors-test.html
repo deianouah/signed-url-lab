@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CORS Test</title>
+  <style>
+    body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; }
+    pre { background: #111; color: #0f0; padding: 1rem; border-radius: 8px; direction: ltr; text-align: left; white-space: pre-wrap; min-height: 5rem; }
+    button { font: inherit; padding: .45rem .8rem; cursor: pointer; }
+    code { background: #f3f3f3; padding: 0 .3rem; direction: ltr; unicode-bidi: embed; }
+  </style>
+</head>
+<body>
+  <h1>CORS Test</h1>
+  <p>
+    This page requests <code>ping.php</code> from the <code>localhost</code> origin.
+    Open it from two different addresses and compare:
+  </p>
+  <ol>
+    <li><code>http://localhost/stream-lab/cors-test.html</code> - same origin, so CORS is not involved.</li>
+    <li><code>http://127.0.0.1/stream-lab/cors-test.html</code> - different origin, so the response is blocked unless it is allowed.</li>
+  </ol>
+  <p>
+    To make the second case succeed, add <code>'http://127.0.0.1'</code> to
+    <code>allowed_origins</code> in <code>config.php</code>, then try again.
+    If Apache uses a port other than 80, include that port in the origin.
+  </p>
+
+  <p>Current origin: <b id="origin"></b></p>
+  <button id="go">Send Request</button>
+  <pre id="log"></pre>
+
+  <script>
+    const API = 'http://localhost/stream-lab'; // Update this if the path or port differs
+    const log = (m) => { document.getElementById('log').textContent += m + '\n'; };
+    document.getElementById('origin').textContent = location.origin;
+
+    document.getElementById('go').addEventListener('click', async () => {
+      try {
+        const r = await fetch(API + '/ping.php');
+        log('HTTP ' + r.status + ' → ' + (await r.text()));
+      } catch (e) {
+        log('Response blocked (CORS): ' + e.message + '\nOpen the Console to view the browser message.');
+      }
+    });
+  </script>
+</body>
+</html>
