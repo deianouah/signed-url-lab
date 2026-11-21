@@ -45,6 +45,8 @@ These credentials are for the local demo only.
 
 The default TTL is 60 seconds and can be changed with `ttl` in `config.php`.
 
+After the link is issued, use **Copy URL** to copy it for testing in `curl`, IDM, yt-dlp, or another HTTP client.
+
 ## External Tool Test
 
 On Windows:

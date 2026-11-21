@@ -32,11 +32,6 @@ $ttl = (int)cfg('ttl');
     <div><input name="username" placeholder="Username" required></div>
     <div><input name="password" type="password" placeholder="Password" required></div>
     <button type="submit">Sign In</button>
-    <p class="muted">
-      Test accounts:<br>
-      <b>sub</b> / sub123 - subscribed<br>
-      <b>free</b> / free123 - not subscribed
-    </p>
   </form>
 
 <?php else: ?>
@@ -58,6 +53,7 @@ $ttl = (int)cfg('ttl');
   <div class="card">
     <b>Signed URL (for testing with external tools):</b>
     <code id="url">- Not requested yet -</code>
+    <button id="copy-url" type="button" disabled>Copy URL</button>
     <p class="muted">Valid for <?= $ttl ?> seconds. Paste the URL into curl, IDM, or yt-dlp and inspect the result.</p>
   </div>
 
@@ -65,6 +61,7 @@ $ttl = (int)cfg('ttl');
     const video = document.getElementById('video');
     const statusEl = document.getElementById('status');
     const urlEl = document.getElementById('url');
+    const copyButton = document.getElementById('copy-url');
     let timer = null;
 
     const messages = {
@@ -84,11 +81,13 @@ $ttl = (int)cfg('ttl');
           statusEl.className = 'err';
           statusEl.textContent = 'HTTP ' + r.status + ' — ' + (messages[r.status] || data.error) + ' (' + data.error + ')';
           urlEl.textContent = '- No signed URL issued -';
+          copyButton.disabled = true;
           video.removeAttribute('src');
           video.load();
           return;
         }
         urlEl.textContent = data.url;
+        copyButton.disabled = false;
         video.src = data.url;
         video.play().catch(() => {});
 
@@ -106,6 +105,17 @@ $ttl = (int)cfg('ttl');
       } catch (e) {
         statusEl.className = 'err';
         statusEl.textContent = 'Connection error: ' + e.message;
+      }
+    });
+
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(urlEl.textContent);
+        copyButton.textContent = 'Copied';
+        setTimeout(() => { copyButton.textContent = 'Copy URL'; }, 1500);
+      } catch (e) {
+        statusEl.className = 'err';
+        statusEl.textContent = 'Could not copy the URL: ' + e.message;
       }
     });
   </script>
